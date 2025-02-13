@@ -123,7 +123,45 @@
                 document.getElementById("login").style.display = "none";
                 // Mostrar el panel de administración
                 document.getElementById("panel").style.display = "block";
-                obtenerIPs();  // Llamada para obtener las IPs registradas
+            } else {
+                intentos++;
+                if (intentos >= 3) {
+                    window.location.href = "index.html"; // Redirige si se alcanzan los 3 intentos
+                } else {
+                    alert("Contraseña incorrecta. Intento " + intentos + " de 3");
+                }
+            }
+        }
+
+        function obtenerIP() {
+   text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <h1>Autenticación</h1>
+        <input type="password" id="password" placeholder="Contraseña">
+        <button class="boton" onclick="verificar()">Ingresar</button>
+    </div>
+
+    <div id="panel">
+        <h1>Panel de Administración</h1>
+
+        <h2>IPs de visitantes:</h2>
+        <pre id="ips">Cargando...</pre>
+    </div>
+
+    <script>
+        let intentos = 0;
+
+        function verificar() {
+            let pass = document.getElementById("password").value;
+            if (pass === "123") {
+                // Ocultar el panel de login
+                document.getElementById("login").style.display = "none";
+                // Mostrar el panel de administración
+                document.getElementById("panel").style.display = "block";
             } else {
                 intentos++;
                 if (intentos >= 3) {
@@ -139,35 +177,15 @@
             .then(response => response.json())
             .then(data => {
                 let ip = data.ip;
-                // Enviar la IP al backend para guardarla
-                fetch("/api/registrar-ip", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ ip }),
-                })
-                .then(response => response.json())
-                .then(() => {
-                    console.log("IP registrada correctamente");
-                })
-                .catch(() => {
-                    console.error("Error al registrar la IP");
-                });
+                let ipList = JSON.parse(localStorage.getItem("ips")) || [];
+                if (!ipList.includes(ip)) {
+                    ipList.push(ip);
+                    localStorage.setItem("ips", JSON.stringify(ipList));
+                }
+                mostrarIPs(ipList);
             })
             .catch(() => {
                 document.getElementById("ips").textContent = "No se pudo obtener la IP.";
-            });
-        }
-
-        function obtenerIPs() {
-            fetch("/api/obtener-ips")
-            .then(response => response.json())
-            .then(data => {
-                mostrarIPs(data.ips);
-            })
-            .catch(() => {
-                document.getElementById("ips").textContent = "No se pudo obtener las IPs.";
             });
         }
 
@@ -176,14 +194,36 @@
             ipsElement.innerHTML = '';
 
             ipList.forEach(ip => {
-                let ipElement = document.createElement('div');
-                ipElement.textContent = ip;
+                let ipElement = document.createElement('div');                                                                                                                                   ipElement.textContent = ip;
                 ipElement.classList.add('ip');
+                ipElement.onclick = function() {
+                    // Redirigir a cámara.html solo si la IP tiene permisos
+                    if (esIPPermitida(ip)) {
+                        window.location.href = `2.html?ip=${ip}`;
+                    }
+                };
                 ipsElement.appendChild(ipElement);
             });
         }
 
-        obtenerIP();  // Llamar para obtener la IP de la página en cada carga
+        function esIPPermitida(ip) {
+            // Lógica para verificar si la IP tiene permisos
+            let ipList = JSON.parse(localStorage.getItem("ips")) || [];
+            return ipList.includes(ip);
+        }
+
+        obtenerIP();
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

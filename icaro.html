@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ᛒᛃᛟᚱᚾ ᛊᚹᚨᚱᛏ</title>
-    <meta name="theme-color" content="#00bcd4"> <!-- Aquí va la línea agregada -->
+    <title>༺ᛒᛃᛟᚱᚾ ᛊᚹᚨᚱᛏ༻</title>
+    <meta name="theme-color" content="#000000">
     <style>
+        @font-face {
+            font-family: 'Nordic';
+            src: url('nordic.ttf') format('truetype'); /* Asegúrate de tener esta fuente */
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -13,109 +18,161 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: black;
-            font-family: 'Courier New', monospace;
-        }
-
-        .container {
-            position: relative;
+            background-color: black; /* Fondo negro */
             text-align: center;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Estilo para el texto rúnico */
-        .rune-text {
-            font-size: 5vw;
+            font-family: 'Nordic', serif;
             color: white;
-            font-family: 'Segoe UI', sans-serif;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.8);
+            flex-direction: column;
+            overflow: hidden;
+            position: relative; /* Para que los elementos con z-index se apilen correctamente */
         }
 
-        /* Estilo para el fondo */
-        .background {
+        /* Contenedor para el título y el botón */
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10; /* El título está encima de la ventana emergente */
+        }
+
+        /* Efecto glitch */
+        @keyframes glitch {
+            0% { text-shadow: 3px 3px red, -3px -3px blue; }
+            25% { text-shadow: -3px 3px blue, 3px -3px red; }
+            50% { text-shadow: 3px -3px red, -3px 3px blue; }
+            75% { text-shadow: -3px -3px blue, 3px 3px red; }
+            100% { text-shadow: 3px 3px red, -3px -3px blue; }
+        }
+
+        /* Runas con efecto glitch */
+        .title {
+            font-size: 4rem;
+            color: red;
+            text-shadow: 0 0 10px red, 0 0 20px red;
+            animation: glitch 0.5s infinite;
+            margin-bottom: 20px;
+        }
+
+        /* Estilos para las runas que caen */
+        .runa {
             position: absolute;
+            color: #ff0000;
+            font-size: 2rem;
+            animation: caer 6s linear infinite;
+            opacity: 0.8;
+            z-index: 1; /* Asegura que las runas queden por debajo de la ventana emergente */
+        }
+
+        /* Animación de caída de las runas */
+        @keyframes caer {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh); /* La runa cae hasta el final de la pantalla */
+                opacity: 0;
+            }
+        }
+
+        /* Botón con efecto glitch */
+        .glitch-button {
+            background-color: black;
+            color: red;
+            border: 2px solid red;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.2s;
+            animation: glitch 0.5s infinite;
+            margin-top: 20px;
+        }
+
+        .glitch-button:hover {
+            background-color: #222;
+            transform: scale(1.05);
+        }
+
+        /* Estilos para la ventana emergente */
+        .modal {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://www.w3schools.com/w3images/mountains.jpg'); /* Cambia esta URL por la de tu imagen deseada */
-            background-size: cover;
-            background-position: center;
-            filter: blur(8px);
-            z-index: -1;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            color: red;
+            font-size: 2rem;
+            font-weight: bold;
+            animation: glitch 0.5s infinite;
+            z-index: 20; /* La ventana emergente estará por encima de las runas */
         }
-
-        /* Estilo para el botón de permitir transparente */
-        .allow-button {
-            position: absolute;
-            bottom: 20%; /* Esto coloca el botón más abajo */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 188, 212, 0.2); /* Color celeste con opacidad */
-            color: white;
-            padding: 10px 30px;
-            font-size: 20px;
-            border: 2px solid #00bcd4; /* Borde de color celeste */
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .allow-button:hover {
-            background-color: rgba(0, 188, 212, 0.5); /* Cambio de color cuando se pasa el cursor */
-        }
-    </style>
+        </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="background"></div>
+    <!-- Contenedor de las runas (dentro del body para evitar desbordes) -->
+    <div id="runa-container" style="position: absolute; width: 100%; height: 100%;"></div>
 
-        <!-- Texto rúnico -->
-        <div class="rune-text">ᛒᛃᛟᚱᚾ ᛊᚹᚨᚱᛏ</div>
-
-        <!-- Reproductor de música en segundo plano -->
-        <audio autoplay loop>
-            <source src="o.mp3" type="audio/mp3">
-            Tu navegador no soporta el reproductor de audio.
-        </audio>
-        
-        <!-- Botón para permitir permisos -->
-        <button class="allow-button" onclick="enablePermissions()">Permitir</button>
-
+    <!-- Ventana emergente completamente negra -->
+    <div class="modal" id="modal">
+        <p>Debes reproducir la música para acceder</p>
+        <button class="glitch-button" onclick="playMusic()">Reproducir</button>
     </div>
 
+    <!-- Contenedor centrado para el título y el botón -->
+    <div class="center-container">
+        <!-- Título -->
+        <div class="title">༺ᛒᛃᛟᚱᚾ ᛊᚹᚨᚱᛏ༻</div>
+
+        <!-- Botón de entrar al mercado (debajo de las runas) -->
+        <button class="glitch-button" id="marketBtn" onclick="enterMarket()" style="display: none;">Entrar al Mercado</button>
+    </div>
+
+    <!-- Reproductor de música oculto -->
+    <audio id="music" src="o.mp3"></audio>
+
     <script>
-        function enablePermissions() {
-            // Permitir acceso a la cámara
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    console.log("Cámara permitida");
-                })
-                .catch(function(error) {
-                    console.log("Error al acceder a la cámara: ", error);
-                });
+        // Función para generar la lluvia de runas
+        function createRuna() {
+            const runas = ['ᛟ', 'ᛋ', 'ᛒ', 'ᛇ', 'ᚠ', 'ᛚ', 'ᛉ', 'ᛗ', 'ᛜ', 'ᛞ', 'ᛤ', 'ᛦ', 'ᛩ', 'ᛡ']; // Más runas añadidas
+            const container = document.getElementById('runa-container');
+            const runa = document.createElement('div');
+            runa.classList.add('runa');
+            runa.innerText = runas[Math.floor(Math.random() * runas.length)];
+            runa.style.left = Math.random() * window.innerWidth + 'px'; // Posición aleatoria horizontal
+            runa.style.animationDuration = (Math.random() * 5 + 5) + 's'; // Duración aleatoria
+            container.appendChild(runa);
 
-            // Permitir acceso al micrófono
-            navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(function(stream) {
-                    console.log("Micrófono permitido");
-                })
-                .catch(function(error) {
-                    console.log("Error al acceder al micrófono: ", error);
-                });
+            // Eliminar las runas cuando terminan de caer
+            setTimeout(() => {
+                container.removeChild(runa);
+            }, 6000); // Después de 6 segundos
+        }
 
-            // Permitir acceso a la ubicación
-            navigator.geolocation.getCurrentPosition(function(position) {
-                console.log("Ubicación permitida:", position);
-            }, function(error) {
-                console.log("Error al obtener ubicación: ", error);
+        // Llamar a la función de lluvia de runas continuamente
+        setInterval(createRuna, 200); // Crear una runa cada 200ms
+
+        function playMusic() {
+            let audio = document.getElementById("music");
+            audio.play().then(() => {
+                document.getElementById("modal").style.display = "none"; // Cierra la ventana emergente
+                document.getElementById("marketBtn").style.display = "block"; // Muestra el botón de entrar
+            }).catch(error => {
+                console.log("Error al reproducir: ", error);
             });
+        }
+
+        function enterMarket() {
+            window.location.href = "https://pch.mercadoshops.com.ar/";
         }
     </script>
 

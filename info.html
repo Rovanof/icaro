@@ -54,14 +54,27 @@
         07bc14667c671c
     </div>
 
-    <div class="contador">Visitas: <span id="visitas">0</span></div>
+    <div class="contador">Visitas: <span id="visitas">Cargando...</span></div>
 
     <script>
-        let visitas = localStorage.getItem("contadorVisitas") || 0;
-        visitas++;
-        localStorage.setItem("contadorVisitas", visitas);
-        document.getElementById("visitas").textContent = visitas;
+        // Función para obtener las visitas desde el servidor
+        function obtenerVisitas() {
+            fetch('contador_visitas.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Mostrar el contador de visitas en el HTML
+                    document.getElementById("visitas").textContent = data.visitas;
+                })
+                .catch(() => {
+                    console.error("No se pudo obtener el contador de visitas.");
+                    document.getElementById("visitas").textContent = "Error al cargar";
+                });
+        }
 
+        // Llamar a la función para obtener las visitas
+        obtenerVisitas();
+
+        // Redirigir a "index.html" después de 15 segundos
         setTimeout(function(){
             window.location.href = "index.html";
         }, 15000); // 15 segundos

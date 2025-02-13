@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información</title>
+    <meta name="theme-color" content="#000000">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .glitch-text {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 15px;
+            border: 2px solid white;
+            max-width: 80%;
+            animation: glitch 0.5s infinite alternate;
+        }
+
+        .contador {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .gif {
+            margin-top: 20px;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <audio id="audio" loop autoplay>
+        <source src="fondo.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="glitch-text">
+        EL TIPO DE SERVICIO Y LA CALIDAD DEL SERVICIO DEPENDERÁN
+        DEL ESTADO DE ÁNIMO DE NUESTRO AGENTE. LE PEDIMOS SU COLABORACIÓN
+        Y QUE, ACORDE AL ESTADO DESEADO, PIDA EL SERVICIO.
+        <br><br>
+        PARA INFORMACIÓN SOBRE EL SERVICIO, CONTACTAR POR SESSION:
+        051322a052be37d6f464e88dc9
+        c9fd2a68271febaecb3afe70d0
+        07bc14667c671c
+    </div>
+
+    <div class="contador">Visitas: <span id="visitas">0</span></div>
+
+    <script>
+        let visitas = localStorage.getItem("contadorVisitas") || 0;
+        visitas++;
+        localStorage.setItem("contadorVisitas", visitas);
+        document.getElementById("visitas").textContent = visitas;
+
+        setTimeout(function(){
+            window.location.href = "index.html";
+        }, 15000); // 15 segundos
+    </script>
+</body>
+</html>

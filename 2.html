@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cámara en Vivo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000; /* Fondo negro */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        #video {
+            width: 100vw; /* El video ocupa todo el ancho */
+            height: 100vh; /* El video ocupa todo el alto */
+            object-fit: cover; /* Mantiene la proporción del video sin deformarlo */
+            border: 2px solid white;
+            border-radius: 8px;
+        }
+
+        #ubicacion {
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 3px solid #fff;
+            border-radius: 12px;
+            width: 300px; /* Cuadrado de coordenadas */
+            height: 300px; /* Alto igual que el ancho para hacerlo cuadrado */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            position: absolute;
+            bottom: 20px; /* Lo coloca en la parte inferior */
+            left: 50%; /* Lo centra horizontalmente */
+            transform: translateX(-50%); /* Alineación perfecta */
+            animation: glitch 1.5s infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 1px 0 red, -1px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(0px, 0px);
+            }
+            10% {
+                text-shadow: -2px 0 red, 2px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(-2px, 2px);
+            }
+            20% {
+                text-shadow: 2px 0 red, -2px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(2px, -2px);
+            }
+            30% {
+                text-shadow: -1px 0 red, 1px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(-2px, 0px);
+            }
+            40% {
+                text-shadow: 1px 0 red, -1px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(2px, 0px);
+            }
+            50% {
+                text-shadow: -2px 0 red, 2px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(0px, 2px);
+            }
+            100% {
+                text-shadow: 1px 0 red, -1px 0 blue, 0 1px green, 0 -1px yellow;
+                transform: translate(0px, 0px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay></video>
+    <p id="ubicacion"></p>
+
+    <script>
+        // Acceso a la cámara
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(function(stream) {
+            document.getElementById("video").srcObject = stream;
+        })
+        .catch(function(error) {
+            console.log("Error al acceder a la cámara o al micrófono: ", error);
+        });
+
+        // Obtener ubicación y traducirla con OpenCage API
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const ubicacion = `Lat: ${lat}, Lon: ${lon}`;
+
+            // Mostrar coordenadas
+            document.getElementById("ubicacion").textContent = ubicacion;
+
+            // Usar OpenCage API para obtener país, provincia y localidad
+            fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=ffb1629371da4c3cb9644b3643a906cb`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.results.length > 0) {
+                    const location = data.results[0].formatted;
+                    document.getElementById("ubicacion").textContent = `${ubicacion}\n${location}`;
+                } else {
+                    document.getElementById("ubicacion").textContent = `${ubicacion}\nUbicación desconocida`;
+                }
+            })
+            .catch(error => {
+                console.log("Error al obtener la ubicación: ", error);
+                document.getElementById("ubicacion").textContent = `${ubicacion}\nUbicación desconocida`; // Si hay error
+            });
+        }, function(error) {
+            console.log("Error al obtener la ubicación: ", error);
+            document.getElementById("ubicacion").textContent = "Error al obtener la ubicación";
+        });
+    </script>
+</body>
+</html>
